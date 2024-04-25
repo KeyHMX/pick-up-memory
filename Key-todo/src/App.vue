@@ -29,6 +29,19 @@ export default {
         window.location.hash = ''
         this.visibility = 'all'
       }
+    },
+    addTodo(e){
+      const title = e.target.value.trim()
+      if (!title){
+        return 
+      }
+      this.todos.push(
+        {id:Date.now(),
+        title,
+        completed:false      
+        }
+      )
+      e.target.value=''
     }
   },
   computed:{
@@ -39,10 +52,16 @@ export default {
         case 'completed': return this.todos.filter(todo=>todo.completed)
       }
 
+    },
+    remaining(){
+      return this.todos.filter(todo=>!todo.completed).length
     }
   },
+  //生命周期钩子函数
   mounted (){
     window.addEventListener('hashchange',this.onHashChange)
+    //好吧这里仅仅是将路由定在之前的状态而不是恢复为默认值all
+    this.onHashChange()
   }
   
 }
@@ -54,7 +73,7 @@ export default {
   <section class="todoapp">
 			<header class="header">
 				<h1>todos</h1>
-				<input class="new-todo" placeholder="What needs to be done?" autofocus>
+				<input @keyup.enter = "addTodo" class="new-todo" placeholder="What needs to be done?" autofocus>
 			</header>
 			<!-- This section should be hidden by default and shown when there are todos -->
 			<section class="main">
@@ -81,7 +100,11 @@ export default {
 			<!-- This footer should be hidden by default and shown when there are todos -->
 			<footer class="footer">
 				<!-- This should be `0 items left` by default -->
-				<span class="todo-count"><strong>0</strong> item left</span>
+				<span class="todo-count">
+          <strong>
+            {{remaining}}
+          </strong>
+           item left</span>
 				<!-- Remove this if you don't implement routing -->
 				<ul class="filters">
 					<li>
@@ -93,6 +116,7 @@ export default {
 					<li>
 						<a :class="{selected:visibility==='completed'}"href="#/completed">Completed</a>
 					</li>
+          <!-- select是用于高亮的 -->
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->
 				<button class="clear-completed">Clear completed</button>
