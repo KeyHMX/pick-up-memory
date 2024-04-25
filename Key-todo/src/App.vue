@@ -13,7 +13,8 @@ export default {
           title:'test content2',
           completed:true
         },
-      ]
+      ],
+      visibility:'all'
     }
   },
   methods:{
@@ -21,7 +22,23 @@ export default {
       this.todos.forEach(todo=>todo.completed=e.target.checked)
     },
     onHashChange(){
-      
+      const hash = window.location.hash.replace(/#\/?/,'')
+      if (['all','active','completed'].includes(hash)){
+        this.visibility = hash
+      }else{
+        window.location.hash = ''
+        this.visibility = 'all'
+      }
+    }
+  },
+  computed:{
+    filterTodo (){
+      switch(this.visibility){
+        case 'all' : return this.todos
+        case 'active': return this.todos.filter(todo=>!todo.completed)
+        case 'completed': return this.todos.filter(todo=>todo.completed)
+      }
+
     }
   },
   mounted (){
@@ -47,7 +64,7 @@ export default {
 					<!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
 					<li
-          v-for = "todo in todos"
+          v-for = "todo in filterTodo"
           :key="todo.id"
           :class="{completed:todo.completed}">
 						<div class="view">
@@ -68,13 +85,13 @@ export default {
 				<!-- Remove this if you don't implement routing -->
 				<ul class="filters">
 					<li>
-						<a href="#/">All</a>
+						<a :class="{selected:visibility==='all'}" href="#/all">All</a>
 					</li>
 					<li>
-						<a href="#/active">Active</a>
+						<a :class="{selected:visibility==='active'}"href="#/active">Active</a>
 					</li>
 					<li>
-						<a href="#/completed">Completed</a>
+						<a :class="{selected:visibility==='completed'}"href="#/completed">Completed</a>
 					</li>
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->
