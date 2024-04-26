@@ -42,6 +42,10 @@ export default {
         }
       )
       e.target.value=''
+    },
+    Delete(id){
+      // console.log(id)
+      this.todos=this.todos.filter(todo=>todo.id!==id)
     }
   },
   computed:{
@@ -91,7 +95,7 @@ export default {
               <!-- v-model双向绑定，输入框的值影响页面渲染 ：class这是单向绑定 -->
               <!-- 这个第一个注释错误了，其实这是个checkbox的双向绑定，不是上面的文本框 -->
 							<label v-text="todo.title"></label>
-							<button class="destroy"></button>
+							<button class="destroy" @click="Delete(todo.id)"></button>
 						</div>
 						<input class="edit" value="Create a TodoMVC template">
 					</li>
