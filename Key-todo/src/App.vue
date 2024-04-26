@@ -14,7 +14,9 @@ export default {
           completed:true
         },
       ],
-      visibility:'all'
+      visibility:'all',
+      isFooterVisible : true
+      //设置footer的显示与否
     }
   },
   methods:{
@@ -42,10 +44,16 @@ export default {
         }
       )
       e.target.value=''
+      this.isFooterVisible = true
     },
     Delete(id){
       // console.log(id)
       this.todos=this.todos.filter(todo=>todo.id!==id)
+    },
+    clearCompleted(){
+      this.todos=this.todos.filter(todo=>todo.completed!==true)
+      this.isFooterVisible = this.todos.length === 0 ? false : true;
+      
     }
   },
   computed:{
@@ -59,7 +67,10 @@ export default {
     },
     remaining(){
       return this.todos.filter(todo=>!todo.completed).length
-    }
+    },
+    // isFooterVisible(){
+    //   return this.remaining>0
+    // }
   },
   //生命周期钩子函数
   mounted (){
@@ -102,13 +113,13 @@ export default {
 				</ul>
 			</section>
 			<!-- This footer should be hidden by default and shown when there are todos -->
-			<footer class="footer">
+			<footer class="footer" v-if="isFooterVisible">
 				<!-- This should be `0 items left` by default -->
 				<span class="todo-count">
           <strong>
             {{remaining}}
           </strong>
-           item left</span>
+          item{{ remaining >1 ? 's' : '' }} left</span>
 				<!-- Remove this if you don't implement routing -->
 				<ul class="filters">
 					<li>
@@ -123,7 +134,7 @@ export default {
           <!-- select是用于高亮的 -->
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->
-				<button class="clear-completed">Clear completed</button>
+				<button class="clear-completed" @click="clearCompleted">Clear completed</button>
 			</footer>
 		</section>
 </template>
